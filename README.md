@@ -11,6 +11,9 @@ USTH ICT 2022 Distributed Systems
 Group Info
 =======================
 
-* Name 1 (ID1)
-* Name 2 (ID2)
+* Tran Hong Quan    - BI10-149
+* Lu Khanh Huyen    - BI10-083
+* Vu Duc Chinh      - BI10-024
+* Nguyen Xuan Tung  - BI10-188
+* Nguyen Quang Anh  - BI10-012
 
