@@ -61,7 +61,7 @@ provided chat system.
 
 \subsection{System organization}
 \noindent%
-The server creates a specific port, for eg: 9819. From the client CLI, it takes 2 arguments, IP address and the port to connect to the server. One client connects to one server only. The client send data through a character array called buffer. The buffer has a maximum length of 255. After receiving the buffer, the server will writes it to the file. The client will notice the server there is nothing left after reaching end-of-file. Afterwards, both server and client will close.
+The server creates a specific port, here the port is 12345 given by our teacher. From the client CLI, it takes 1 arguments, the IP address. One client connects to one server only. The client send data through a character array called buffer. The buffer has a maximum size of 1024. After receiving the buffer, the server will writes it to the file. The client will notice the server there is nothing left after reaching end-of-file. Afterwards, both server and client will close.
 
 \begin{figure}[H]
     \centering
@@ -70,6 +70,8 @@ The server creates a specific port, for eg: 9819. From the client CLI, it takes 
 \end{figure}
 
 \subsection{Implementation}
+\noindent%
+From the client, we type gcc client.c -o client. Then type ./client 127.0.0.1.
 \noindent%
 We have implemented the client side:
 
@@ -142,6 +144,8 @@ int main(int argc, char* argv[]) {
 }
 
 \end{minted}
+\noindent%
+From the server, we type gcc server.c -o server. Then type ./server.
 \noindent%
 We have implemented the server side:
 \begin{minted}{c}
@@ -224,6 +228,19 @@ int main() {
 
 }
 \end{minted}
+\noindent%
+Here is the result:
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1.0]{images/client.PNG}
+    \caption{Client side}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1.0]{images/server.PNG}
+    \caption{Server side}
+\end{figure}
 \subsection{Contribution}
 \noindent%
 \begin{table}[ht!]
