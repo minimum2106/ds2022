@@ -101,7 +101,7 @@ Client and server stubs were generated when we typed "rpcgen -a -C file.x".
 \noindent%
 We have implemented the client side:
 
-\begin{minted}{c}
+\begin{minted}[linenos,tabsize=2,breaklines]{c}
 #include "file.h"
 #include <time.h>
 
@@ -132,12 +132,17 @@ void filestransfer_1(char* host, char* filename)
 	}
 	memset(transfer_file_1_arg.buffer, 0, sizeof(transfer_file_1_arg.buffer));
 	transfer_file_1_arg.buffer_size = 0;
-	int num_read = fread(transfer_file_1_arg.buffer, 1, 1024, fp);
-	transfer_file_1_arg.buffer_size += num_read;
+	while(1){
+		transfer_file_1_arg.buffer_size = fread(transfer_file_1_arg.buffer, 1, 1024, fp);
 
-	result_1 = transfer_file_1(&transfer_file_1_arg, clnt);
-	if (result_1 == (int*)NULL) {
-		clnt_perror(clnt, "call failed");
+		result_1 = transfer_file_1(&transfer_file_1_arg, clnt);
+		if (result_1 == (int*)NULL) {
+			clnt_perror(clnt, "call failed");
+		}
+		if(transfer_file_1_arg.buffer_size < 1024) {
+			printf("\nUpload finished.\n");
+			break;
+		}
 	}
 	clock_t end = clock();
 	double upload_time = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -173,7 +178,7 @@ int main(int argc, char* argv[])
 
 \noindent%
 We have implemented the server side: 
-\begin{minted}{c}
+\begin{minted}[linenos,tabsize=2,breaklines]{c}
 #include "file.h"
 
 int* transfer_file_1_svc(file* argp, struct svc_req* rqstp)
