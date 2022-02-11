@@ -13,6 +13,12 @@
 #include <iterator>
 #include <cctype>
 #include <algorithm>
+
+bool sortbysec(const std::pair<std::string, int>& a,
+	const std::pair<std::string, int>& b)
+{
+	return (a.second < b.second);
+}
 int main(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm c;
@@ -22,7 +28,7 @@ int main(int argc, char* argv[]) {
 	FILE* fp;
 	int option, key, rand;
 	char value[20];
-	char content[299] = { 0 };
+	char content[1256] = { 0 };
 	std::string line, word;
 	std::vector<std::pair<std::string, int>>datas;
 	char buf;
@@ -50,48 +56,28 @@ int main(int argc, char* argv[]) {
 		break;
 	}
 	MPI_Comm_connect(portnamea, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &c);
-	MPI_Recv(&content, 298, MPI_CHAR, MPI_ANY_SOURCE, 2003, c, &status);
-	std::cout << content;
+	MPI_Recv(&content, 1255, MPI_CHAR, MPI_ANY_SOURCE, 2003, c, &status);
 
 	line = content;
-	for (int i = 0, len = line.size(); i < len; i++) {
-		if (ispunct(line[i])) {
-			line.erase(i--, 1);
-			len = line.size();
-		}
-	}
-	std::istringstream ss(line);
+	// std::cout<<content;
+	std::istringstream ss(content);
 
 	while (ss >> word) {
 		std::pair<std::string, int> pair1;
 		pair1.first = word;
-		pair1.second = 1;
+		pair1.second = word.length();
 		datas.push_back(pair1);
 	}
 
-	std::sort(datas.begin(), datas.end());
-	for (int i = 0; i < datas.size(); i++) {
-		std::cout << datas[i].first << datas[i].second << std::endl;
-	}
-	std::map<std::pair<std::string, int>, int> counts;
 
-	for (const auto& p : datas) {
-		++counts[p];
-	}
+	std::sort(datas.begin(), datas.end(), sortbysec);
 	sleep(1.0);
 	MPI_Comm_connect(portnamea, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &c);
-	int total = counts.size();
-	MPI_Send(&(total), 1, MPI_INT, 0, 2004, c);
-	for (const auto& p : counts) {
-		const auto& p1 = p.first.first;
-		const auto& p2 = p.first.second;
-		int count = p.second;
-		char buff[20] = { 0 };
-		memset(&buff, 0, sizeof(buff));
-		memcpy(&buff, p1.c_str(), 20);
-		MPI_Send(&buff, 20, MPI_CHAR, 0, 2004, c);
-		MPI_Send(&count, 1, MPI_INT, 0, 2004, c);
-	}
+	char buff[100] = { 0 };
+	strcpy(buff, datas[datas.size() - 1].first.c_str());
+	int count = datas[datas.size() - 1].second;
+	MPI_Send(&buff, 100, MPI_CHAR, 0, 2004, c);
+	MPI_Send(&count, 1, MPI_INT, 0, 2004, c);
 	MPI_Comm_disconnect(&c);
 	MPI_Finalize();
 	return 0;
