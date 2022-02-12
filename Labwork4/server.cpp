@@ -1,5 +1,5 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<vector>
 #include <stdio.h>
 #include <mpi.h>
 #include <string>
@@ -12,7 +12,7 @@
 #include <map>
 #include <iterator>
 #include <cctype>
-#include <algorithm>
+#include<algorithm>
 
 int main(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
 
 		MPI_Comm_accept(portname, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
 		MPI_Recv(&total1, 1, MPI_INT, MPI_ANY_SOURCE, 2004, a, &status);
+		std::cout << "Number of words in 1: " << total1 << std::endl;
 		for (int i = 0; i < total1; i++) {
 
 			memset(&buff2, 0, sizeof(buff2));
@@ -73,6 +74,7 @@ int main(int argc, char* argv[]) {
 
 		MPI_Comm_accept(portname, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
 		MPI_Recv(&total2, 1, MPI_INT, MPI_ANY_SOURCE, 2004, a, &status);
+		std::cout << "Number of words in 2: " << total2 << std::endl;
 		for (int i = 0; i < total2; i++) {
 			memset(&buff2, 0, sizeof(buff2));
 			MPI_Recv(&buff2, 20, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
@@ -81,19 +83,30 @@ int main(int argc, char* argv[]) {
 			datas.push_back(std::make_pair(word, count2));
 		}
 
-		std::map<std::pair<std::string, int>, int> counts;
+		std::cout << "Datas size: " << datas.size() << std::endl;
 
-		for (const auto& p : datas) {
-			++counts[p];
-		}
-		for (const auto& p : counts) {
-			const auto& p1 = p.first.first;
-			const auto& p2 = p.first.second;
-			int count = p.second;
-			finaldatas.push_back(std::make_pair(p1, count));
-		}
 		break;
 
+	}
+	// for (int i = 0; i < datas.size(); i++) {
+	// 	std::cout << datas[i].first << " "<<datas[i].second << std::endl;
+	// }
+
+	std::map<std::string, int> counts;
+
+	for (const auto& p : datas) {
+		if (!counts[p.first]) {
+			counts[p.first] = p.second;
+		}
+		else {
+			counts[p.first] += p.second;
+		}
+	}
+	for (const auto& p : counts) {
+		std::string p1 = p.first;
+		int count = p.second;
+		// std::cout<<"key: "<<p1<<" value "<<count<<std::endl;
+		finaldatas.push_back(std::make_pair(p1, count));
 	}
 	for (int i = 0; i < finaldatas.size(); i++) {
 		std::cout << finaldatas[i].first << " occurs " << finaldatas[i].second << " times" << std::endl;

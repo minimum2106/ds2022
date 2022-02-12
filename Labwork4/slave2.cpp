@@ -1,5 +1,5 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<vector>
 #include <stdio.h>
 #include <mpi.h>
 #include <string>
@@ -12,7 +12,7 @@
 #include <map>
 #include <iterator>
 #include <cctype>
-#include <algorithm>
+#include<algorithm>
 int main(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm c;
@@ -73,22 +73,28 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < datas.size(); i++) {
 		std::cout << datas[i].first << datas[i].second << std::endl;
 	}
-	std::map<std::pair<std::string, int>, int> counts;
+	std::map<std::string, int> counts;
 
 	for (const auto& p : datas) {
-		++counts[p];
+		if (!counts[p.first]) {
+			counts[p.first] = p.second;
+		}
+		else {
+			counts[p.first] += p.second;
+		}
 	}
+
+	// std::cout<<"In count"<<counts.size()<<std::endl;
 	sleep(1.0);
 	MPI_Comm_connect(portnamea, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &c);
 	int total = counts.size();
 	MPI_Send(&(total), 1, MPI_INT, 0, 2004, c);
 	for (const auto& p : counts) {
-		const auto& p1 = p.first.first;
-		const auto& p2 = p.first.second;
+		std::string p1 = p.first;
 		int count = p.second;
 		char buff[20] = { 0 };
 		memset(&buff, 0, sizeof(buff));
-		memcpy(&buff, p1.c_str(), 20);
+		strcpy(buff, p1.c_str());
 		MPI_Send(&buff, 20, MPI_CHAR, 0, 2004, c);
 		MPI_Send(&count, 1, MPI_INT, 0, 2004, c);
 	}
