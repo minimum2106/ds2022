@@ -63,65 +63,65 @@ int main(int argc, char* argv[]) {
 	while (again != 0) {
 		std::cout << portnamenow << std::endl;
 		MPI_Comm_connect(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
-		std::cout << "Your option is: Choose 1 to get, 2 to add/update, 3 to delete" << std::endl;
+		std::cout << "Your option is: 1 to get, 2 to add/update, 3 to delete" << std::endl;
 		std::cin >> option;
 		std::cout << "Your option: " << option << std::endl;
 
 		switch (option) {
-		case 1: {
-			printf("Client requests GET\n");
-			std::cin >> key;
-			MPI_Send(&option, 1, MPI_INT, 0, 2001, a);
-			strcpy(key_db, key.c_str());
-			MPI_Send(&key_db, 100, MPI_CHAR, 0, 2001, a);
-			MPI_Comm_accept(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
-			MPI_Recv(&value_db, 100, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
-			std::cout << "Value of " << key << " is " << value_db << std::endl;
-			std::cout << "Finish case 1" << std::endl;
-			break;
-		}
-		case 2: {
-			printf("You choose PUT\n");
-			std::cin >> key >> value;
-			MPI_Send(&option, 1, MPI_INT, 0, 2001, a);
-			strcpy(key_db, key.c_str());
-			strcpy(value_db, value.c_str());
-			MPI_Send(&key_db, 100, MPI_CHAR, 0, 2001, a);
-			MPI_Send(&value_db, 100, MPI_CHAR, 0, 2001, a);
-			sleep(1.0);
-			while (fopen("primarynow.txt", "r") != NULL) {
-				fread(portnamenow, 1, 53, fp);
-				fclose(fp);
+			case 1: {
+				printf("Client requests GET\n");
+				std::cin >> key;
+				MPI_Send(&option, 1, MPI_INT, 0, 2001, a);
+				strcpy(key_db, key.c_str());
+				MPI_Send(&key_db, 100, MPI_CHAR, 0, 2001, a);
+				MPI_Comm_accept(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
+				MPI_Recv(&value_db, 100, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
+				std::cout << "Value of " << key << " is " << value_db << std::endl;
+				std::cout << "Finish get" << std::endl;
 				break;
 			}
-			MPI_Comm_accept(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
-			std::cout << portnamenow << std::endl;
-			// MPI_Recv(&portnamerecv, 53, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
+			case 2: {
+				printf("Client requests ADD/UPDATE\n");
+				std::cin >> key >> value;
+				MPI_Send(&option, 1, MPI_INT, 0, 2001, a);
+				strcpy(key_db, key.c_str());
+				strcpy(value_db, value.c_str());
+				MPI_Send(&key_db, 100, MPI_CHAR, 0, 2001, a);
+				MPI_Send(&value_db, 100, MPI_CHAR, 0, 2001, a);
+				sleep(1.0);
+				while (fopen("primarynow.txt", "r") != NULL) {
+					fread(portnamenow, 1, 53, fp);
+					fclose(fp);
+					break;
+				}
+				MPI_Comm_accept(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
+				std::cout << portnamenow << std::endl;
+				// MPI_Recv(&portnamerecv, 53, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
 
-			std::cout << "Finish case 2" << std::endl;
-			break;
-		}
-		case 3: {
-			printf("You choose Delete\n");
-			std::cin >> key;
-			MPI_Send(&option, 1, MPI_INT, 0, 2001, a);
-			strcpy(key_db, key.c_str());
-			MPI_Send(&key_db, 100, MPI_CHAR, 0, 2001, a);
-			sleep(1.0);
-			while (fopen("primarynow.txt", "r") != NULL) {
-				fread(portnamenow, 1, 53, fp);
-				fclose(fp);
+				std::cout << "Finish add/update" << std::endl;
 				break;
 			}
-			MPI_Comm_accept(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
-			std::cout << portnamenow << std::endl;
-			// MPI_Recv(&portnamerecv, 53, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
+			case 3: {
+				printf("Client requests Delete\n");
+				std::cin >> key;
+				MPI_Send(&option, 1, MPI_INT, 0, 2001, a);
+				strcpy(key_db, key.c_str());
+				MPI_Send(&key_db, 100, MPI_CHAR, 0, 2001, a);
+				sleep(1.0);
+				while (fopen("primarynow.txt", "r") != NULL) {
+					fread(portnamenow, 1, 53, fp);
+					fclose(fp);
+					break;
+				}
+				MPI_Comm_accept(portnamenow, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &a);
+				std::cout << portnamenow << std::endl;
+				// MPI_Recv(&portnamerecv, 53, MPI_CHAR, MPI_ANY_SOURCE, 2004, a, &status);
 
-			std::cout << "Finish case 3" << std::endl;
-			break;
+				std::cout << "Finish delete" << std::endl;
+				break;
+			}
 		}
-		}
-		std::cout << "Out switch" << std::endl;
+		// std::cout << "Out switch" << std::endl;
 		std::cout << "Do you want to continue?" << std::endl;
 		scanf("%d", &cont);
 		if (cont == 0) {
