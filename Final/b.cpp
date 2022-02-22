@@ -209,7 +209,7 @@ int main(int argc, char* argv[]) {
 						fclose(fp);
 
 						db.erase(key_db);
-						std::cout << "Delete from database " << key_db << std::endl;
+						std::cout << "Delete from database " << std::endl;
 
 						// MPI_Comm_connect(portnamec, MPI_INFO_NULL, 0, MPI_COMM_WORLD, &b);
 						// printf("Primary Server connects to back up server\n");

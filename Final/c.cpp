@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
 						fclose(fp);
 
 						db.erase(key_db);
-						std::cout << "Delete from database " << value_db << std::endl;
+						std::cout << "Delete from database "<< std::endl;
 						std::cout << "Database size is: " << db.size() << std::endl;
 						MPI_Send(&option, 1, MPI_INT, 0, 2002, c);
 						MPI_Send(&random_num, 1, MPI_INT, 0, 2002, c);
